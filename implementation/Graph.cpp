@@ -58,7 +58,7 @@ void Graph::displayNodes() {
 
 }
 
-bool Graph::hasEdge(const std::string &node1, const std::string &node2) {
+bool Graph::hasEdge(const std::string &node1, const std::string &node2) const {
     if (!hasNode(node1)) {
         return false;
     }
