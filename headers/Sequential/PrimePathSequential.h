@@ -1,0 +1,8 @@
+#ifndef PRIMEPATHSEQUENTIAL_H
+#define PRIMEPATHSEQUENTIAL_H
+
+class PrimePathSequential {
+
+};
+
+#endif //PRIMEPATHSEQUENTIAL_H
