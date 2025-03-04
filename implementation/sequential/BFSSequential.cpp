@@ -1,0 +1,1 @@
+#include "../../headers/sequential/BFSSequential.h"
