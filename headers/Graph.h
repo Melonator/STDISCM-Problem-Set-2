@@ -20,7 +20,7 @@ public:
     void displayNodes();
     void displayEdges();
     bool hasNode(const std::string& node) const;
-    bool hasEdge(const std::string& node1, const std::string& node2);
+    bool hasEdge(const std::string& node1, const std::string& node2) const;
     std::vector<Edge> getNeighbors(const std::string& node) const;
 
 protected:
