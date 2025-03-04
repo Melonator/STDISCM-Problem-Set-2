@@ -2,6 +2,7 @@
 
 #include "headers/Graph.h"
 #include "headers/Pathfinder.h"
+#include "headers/ThreadPool.h"
 #include "headers/sequential/AStarSequential.h"
 #include "headers/sequential/BFSSequential.h"
 
