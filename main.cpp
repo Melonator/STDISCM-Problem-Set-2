@@ -6,7 +6,53 @@
 #include "headers/sequential/AStarSequential.h"
 #include "headers/sequential/BFSSequential.h"
 
+using namespace std;
+
 int main() {
-    Graph graph("graph.txt");
+    string file_name;
+    string fullCommand;
+    int mode = 0;
+    cout << "=== G R A P H  M A N I A ===" << "\n\n";
+    cout << "Enter the filename:";
+    cin >> file_name;
+    Graph* graph;
+    cout << "[0] Serial Mode, [1] Parallel Mode:";
+    cin >> mode;
+
+    if (mode == 0) {
+        graph = new Graph(file_name);
+    } else {
+        int numThreads = 0;
+        cout << "How many threads?";
+        cin >> numThreads;
+    }
+
+    cin.ignore();
+    while (fullCommand != "exit") {
+        cout << "Enter a command:";
+        getline(cin, fullCommand);
+        const string command = fullCommand.substr(0, fullCommand.find(' '));
+
+        if (command == "node") {
+            const string node1 = fullCommand.substr(5, fullCommand.find(' ', 5) - 5);
+            const bool result = graph->hasNode(node1);
+            const string output = result ? "The graph has node " : "The graph DOES NOT have node ";
+            cout << output << node1 << "\n";
+        } else if (command == "edge") {
+            const string node1 = fullCommand.substr(5, fullCommand.find(' ', 5) - 5);
+            const string node2 = fullCommand.substr(node1.length() + 6);
+            const bool result = graph->hasEdge(node1, node2);
+            const string output = result ? "The graph has edge " : "The graph DOES NOT have edge ";
+            cout << output << node1 << " "<< node2 << "\n";
+        } else if (command == "path") {
+
+        } else if (command == "prime-path") {
+
+        } else if (command == "shortest-prime-path") {
+
+        } else if (command == "shortest-path") {
+
+        }
+    }
     return 0;
 }

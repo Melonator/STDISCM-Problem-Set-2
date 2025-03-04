@@ -59,11 +59,26 @@ void Graph::displayNodes() {
 }
 
 bool Graph::hasEdge(const std::string &node1, const std::string &node2) {
+    if (!hasNode(node1)) {
+        return false;
+    }
 
+    for (const auto edgeList = graph.at(node1); auto edge : edgeList) {
+        if (edge.node == node2) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
-bool Graph::hasNode(const std::string &node) {
-
+bool Graph::hasNode(const std::string &node) const {
+    try {
+        graph.at(node);
+        return true;
+    } catch (std::exception& e) {
+        return false;
+    }
 }
 
 
