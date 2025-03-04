@@ -1,8 +1,10 @@
 #ifndef ASTARSEQUENTIAL_H
 #define ASTARSEQUENTIAL_H
+#include "../IPathBuilder.h"
 
-class AStarSequential {
-
+class AStarSequential: public IPathBuilder {
+public:
+    void displayPath(const std::string &start, const std::string &end) override;
 };
 
 #endif //ASTARSEQUENTIAL_H

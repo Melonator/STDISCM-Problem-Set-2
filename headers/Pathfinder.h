@@ -1,8 +1,17 @@
 #ifndef PATHFINDER_H
 #define PATHFINDER_H
 
-class Pathfinder {
+#include "../headers/IPathBuilder.h"
 
+class Pathfinder {
+public:
+    Pathfinder(){};
+    void setStrategy(IPathBuilder* path_builder);
+    void displayPath(const std::string& start, const std::string& end);
+
+
+private:
+    IPathBuilder* _path_builder = nullptr;
 };
 
 #endif //PATHFINDER_H

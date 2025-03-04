@@ -1,12 +1,10 @@
-//
-// Created by MY PC on 3/4/2025.
-//
-
 #ifndef ASTARTHREADED_H
 #define ASTARTHREADED_H
+#include "../IPathBuilder.h"
 
-class AStarThreaded {
-
+class AStarThreaded: public IPathBuilder {
+public:
+    void displayPath(const std::string &start, const std::string &end) override;
 };
 
 #endif //ASTARTHREADED_H

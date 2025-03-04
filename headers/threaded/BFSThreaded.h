@@ -1,12 +1,10 @@
-//
-// Created by MY PC on 3/4/2025.
-//
-
 #ifndef BFSTHREADED_H
 #define BFSTHREADED_H
+#include "../IPathBuilder.h"
 
-class BFSThreaded {
-
+class BFSThreaded: public IPathBuilder {
+public:
+    void displayPath(const std::string &start, const std::string &end) override;
 };
 
 #endif //BFSTHREADED_H

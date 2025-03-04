@@ -1,12 +1,10 @@
-//
-// Created by MY PC on 3/4/2025.
-//
-
 #ifndef SHORTESTPRIMEPATHTHREADED_H
 #define SHORTESTPRIMEPATHTHREADED_H
+#include "../IPathBuilder.h"
 
-class ShortestPrimePathThreaded {
-
+class ShortestPrimePathThreaded: public IPathBuilder {
+public:
+    void displayPath(const std::string &start, const std::string &end) override;
 };
 
 #endif //SHORTESTPRIMEPATHTHREADED_H

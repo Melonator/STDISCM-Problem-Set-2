@@ -5,7 +5,6 @@ set(CMAKE_CXX_STANDARD 20)
 
 add_executable(STDISCM_ProblemSet_2 main.cpp
         implementation/Graph.cpp
-        implementation/IPathBuilder.cpp
         implementation/Pathfinder.cpp
         implementation/ThreadPool.cpp
         implementation/sequential/AStarSequential.cpp
@@ -15,4 +14,5 @@ add_executable(STDISCM_ProblemSet_2 main.cpp
         implementation/threaded/AStarThreaded.cpp
         implementation/threaded/BFSThreaded.cpp
         implementation/threaded/PrimePathThreaded.cpp
-        implementation/threaded/ShortestPrimePathThreaded.cpp)
+        implementation/threaded/ShortestPrimePathThreaded.cpp
+        implementation/IPathBuilder.cpp)
