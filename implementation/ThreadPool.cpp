@@ -4,7 +4,7 @@ ThreadPool::ThreadPool(const size_t numThreads) {
     stop = false;
     this->numThreads = numThreads;
     for (size_t i = 0; i < this->numThreads; i++) {
-        workers.emplace_back(&workerThread, this);
+        workers.emplace_back([this] {workerThread();});
     }
 }
 
