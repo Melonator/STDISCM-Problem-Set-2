@@ -62,18 +62,27 @@ int main() {
             pathFinder.setStrategy(bfs.get());
             pathFinder.displayPath(node1, node2, graph);
         } else if (command == "prime-path") {
-            const string node1 = fullCommand.substr(5, fullCommand.find(' ', 5) - 5);
-            const string node2 = fullCommand.substr(node1.length() + 6);
+            size_t firstSpace = fullCommand.find(' ');
+            size_t secondSpace = fullCommand.find(' ', firstSpace + 1);
+
+            string node1 = fullCommand.substr(firstSpace + 1, secondSpace - firstSpace - 1);
+            string node2 = fullCommand.substr(secondSpace + 1);
             pathFinder.setStrategy(primePath.get());
             pathFinder.displayPath(node1, node2, graph);
         } else if (command == "shortest-prime-path") {
-            const string node1 = fullCommand.substr(5, fullCommand.find(' ', 5) - 5);
-            const string node2 = fullCommand.substr(node1.length() + 6);
+            size_t firstSpace = fullCommand.find(' ');
+            size_t secondSpace = fullCommand.find(' ', firstSpace + 1);
+
+            string node1 = fullCommand.substr(firstSpace + 1, secondSpace - firstSpace - 1);
+            string node2 = fullCommand.substr(secondSpace + 1);
             pathFinder.setStrategy(shortestPrimePath.get());
             pathFinder.displayPath(node1, node2, graph);
         } else if (command == "shortest-path") {
-            const string node1 = fullCommand.substr(5, fullCommand.find(' ', 5) - 5);
-            const string node2 = fullCommand.substr(node1.length() + 6);
+            size_t firstSpace = fullCommand.find(' ');
+            size_t secondSpace = fullCommand.find(' ', firstSpace + 1);
+
+            string node1 = fullCommand.substr(firstSpace + 1, secondSpace - firstSpace - 1);
+            string node2 = fullCommand.substr(secondSpace + 1);
             pathFinder.setStrategy(aStar.get());
             pathFinder.displayPath(node1, node2, graph);
         }
