@@ -11,7 +11,6 @@
 using namespace std;
 
 int main() {
-    Pathfinder pathFinder;
     string file_name;
     string fullCommand;
     std::unique_ptr<IPathBuilder> aStar;
@@ -24,6 +23,7 @@ int main() {
     cout << "Enter the filename:";
     cin >> file_name;
     Graph* graph;
+    Pathfinder pathFinder(graph);
     cout << "[0] Serial Mode, [1] Parallel Mode:";
     cin >> mode;
 
@@ -60,22 +60,22 @@ int main() {
             const string node1 = fullCommand.substr(5, fullCommand.find(' ', 5) - 5);
             const string node2 = fullCommand.substr(node1.length() + 6);
             pathFinder.setStrategy(bfs.get());
-            pathFinder.displayPath(node1, node2);
+            pathFinder.displayPath(node1, node2, graph);
         } else if (command == "prime-path") {
             const string node1 = fullCommand.substr(5, fullCommand.find(' ', 5) - 5);
             const string node2 = fullCommand.substr(node1.length() + 6);
             pathFinder.setStrategy(primePath.get());
-            pathFinder.displayPath(node1, node2);
+            pathFinder.displayPath(node1, node2, graph);
         } else if (command == "shortest-prime-path") {
             const string node1 = fullCommand.substr(5, fullCommand.find(' ', 5) - 5);
             const string node2 = fullCommand.substr(node1.length() + 6);
             pathFinder.setStrategy(shortestPrimePath.get());
-            pathFinder.displayPath(node1, node2);
+            pathFinder.displayPath(node1, node2, graph);
         } else if (command == "shortest-path") {
             const string node1 = fullCommand.substr(5, fullCommand.find(' ', 5) - 5);
             const string node2 = fullCommand.substr(node1.length() + 6);
             pathFinder.setStrategy(aStar.get());
-            pathFinder.displayPath(node1, node2);
+            pathFinder.displayPath(node1, node2, graph);
         }
     }
     return 0;
