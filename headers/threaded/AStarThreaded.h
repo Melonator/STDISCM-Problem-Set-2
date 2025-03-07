@@ -4,7 +4,7 @@
 
 class AStarThreaded: public IPathBuilder {
 public:
-    void displayPath(const std::string &start, const std::string &end);
+    void displayPath(const std::string &start, const std::string &end, Graph* graph);
 };
 
 #endif //ASTARTHREADED_H

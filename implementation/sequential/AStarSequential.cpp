@@ -6,6 +6,6 @@
  * TODO: For JD
  *
  */
-void AStarSequential::displayPath(const std::string& start,const std::string& end){
+void AStarSequential::displayPath(const std::string& start,const std::string& end, Graph* graph){
     std::cout << "aus...";
 }

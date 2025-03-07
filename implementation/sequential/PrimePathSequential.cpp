@@ -6,7 +6,7 @@
 #include <string>
 
 // Helper function to check if a number is prime.
-bool isPrime(int n) {
+bool PrimePathSequential::isPrime(int n) {
     if(n <= 1) return false;
     if(n <= 3) return true;
     if(n % 2 == 0 || n % 3 == 0) return false;
@@ -16,13 +16,6 @@ bool isPrime(int n) {
     }
     return true;
 }
-
-// Structure representing a search state.
-struct State {
-    std::string node;
-    int weight;
-    std::vector<std::string> path;
-};
 
 void PrimePathSequential::displayPath(const std::string &start, const std::string &end, Graph* graph) {
     std::queue<State> q;

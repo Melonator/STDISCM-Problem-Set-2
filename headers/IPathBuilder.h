@@ -6,7 +6,7 @@
 
 class IPathBuilder {
 public:
-     void displayPath(const std::string& start, const std::string& end, Graph* graph);
+     virtual void displayPath(const std::string& start, const std::string& end, Graph* graph);
 };
 
 #endif //IPATHBUILDER_H
