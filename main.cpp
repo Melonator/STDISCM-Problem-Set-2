@@ -3,7 +3,7 @@
 #include "headers/Graph.h"
 #include "headers/Pathfinder.h"
 #include "headers/ThreadPool.h"
-#include "headers/sequential/AStarSequential.h"
+#include "headers/sequential/ShortestPathSequential.h"
 #include "headers/sequential/BFSSequential.h"
 #include "headers/sequential/PrimePathSequential.h"
 #include "headers/sequential/ShortestPrimePathSequential.h"
@@ -29,7 +29,7 @@ int main() {
 
     if (mode == 0) {
         graph = new Graph(file_name);
-        aStar = std::make_unique<AStarSequential>();
+        aStar = std::make_unique<ShortestPathSequential>();
         bfs = std::make_unique<BFSSequential>();
         primePath = std::make_unique<PrimePathSequential>();
         shortestPrimePath = std::make_unique<ShortestPrimePathSequential>();

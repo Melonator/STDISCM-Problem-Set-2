@@ -7,11 +7,11 @@ add_executable(STDISCM_ProblemSet_2 main.cpp
         implementation/Graph.cpp
         implementation/Pathfinder.cpp
         implementation/ThreadPool.cpp
-        implementation/sequential/AStarSequential.cpp
+        implementation/sequential/ShortestPathSequential.cpp
         implementation/sequential/BFSSequential.cpp
         implementation/sequential/PrimePathSequential.cpp
         implementation/sequential/ShortestPrimePathSequential.cpp
-        implementation/threaded/AStarThreaded.cpp
+        implementation/threaded/ShortestPathThreaded.cpp
         implementation/threaded/BFSThreaded.cpp
         implementation/threaded/PrimePathThreaded.cpp
         implementation/threaded/ShortestPrimePathThreaded.cpp
