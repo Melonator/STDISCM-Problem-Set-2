@@ -1,13 +1,11 @@
 #include "../../headers/threaded/PrimePathThreaded.h"
 #include "../../headers/Graph.h"
-#include "../../headers/ThreadPool.h"
 #include <iostream>
 #include <vector>
 #include <string>
 #include <atomic>
 #include <mutex>
-#include <thread>
-#include <functional>
+#include <future>
 #include <climits>
 #include <cmath>
 
@@ -22,68 +20,64 @@ bool PrimePathThreaded::isPrime(int n) {
     return true;
 }
 
-
 void PrimePathThreaded::displayPath(const std::string &start, const std::string &end, Graph* graph) {
-    // Create a thread pool. Use hardware concurrency if available; otherwise default to 4.
-    size_t numThreads = std::thread::hardware_concurrency();
-    if(numThreads == 0) numThreads = 4;
-    ThreadPool pool(numThreads);
-
     std::atomic<bool> found(false);
-    std::mutex outputMutex; // To serialize output (only one result is printed).
+    std::mutex outputMutex;
 
-    // Recursive lambda to process a state.
-    std::function<void(State)> processState;
-    processState = [&](State current) {
-        if (found.load()) return; // If already found, skip processing further.
-        // Check if we've reached the destination with a prime (nonzero) weight.
+    // Recursive lambda using std::async for parallelism.
+    std::function<void(State, int)> processState;
+    processState = [&](State current, int depth) {
+        if (found.load()) return; // Skip if a valid path was already found.
+        // If we reached the destination with a nonzero prime weight, print and mark found.
         if (current.node == end && current.weight > 0 && isPrime(current.weight)) {
-            // Use compare_exchange to ensure only one thread prints the result.
             bool expected = false;
             if (found.compare_exchange_strong(expected, true)) {
                 std::lock_guard<std::mutex> lock(outputMutex);
                 std::cout << "prime path: ";
                 for (size_t i = 0; i < current.path.size(); ++i) {
                     std::cout << current.path[i];
-                    if(i < current.path.size() - 1)
+                    if (i < current.path.size() - 1)
                         std::cout << " -> ";
                 }
                 std::cout << " with weight/length= " << current.weight << "\n";
             }
             return;
         }
-        // Expand neighbors.
         const std::vector<Edge>& neighbors = graph->getNeighbors(current.node);
+        std::vector<std::future<void>> localFutures;
         for (const Edge &edge : neighbors) {
-            // Avoid cycles by checking if this neighbor is already in the path.
+            // Avoid cycles by ensuring we don't revisit nodes already in the path.
             bool alreadyVisited = false;
             for (const auto &n : current.path) {
-                if(n == edge.node) {
+                if (n == edge.node) {
                     alreadyVisited = true;
                     break;
                 }
             }
             if (alreadyVisited)
                 continue;
-            // Create next state.
             State next;
             next.node = edge.node;
             next.weight = current.weight + edge.weight;
             next.path = current.path;
             next.path.push_back(edge.node);
-            // Submit the next state to the thread pool.
-            pool.queueTask([=, &found, &processState]() {
-                if (!found.load()) {
-                    processState(next);
-                }
-            });
+            // If too deep, launch asynchronously to limit recursive calls.
+            if (depth >= 3) {
+                localFutures.push_back(std::async(std::launch::async, processState, next, depth + 1));
+            } else {
+                processState(next, depth + 1);
+            }
+        }
+        // Wait for all spawned tasks at this level.
+        for (auto &fut : localFutures) {
+            fut.get();
         }
     };
 
-    // Start by queuing the initial state.
+    // Begin with the initial state.
     State initial { start, 0, {start} };
-    pool.queueTask([&]() { processState(initial); });
-    pool.waitForAllTasks();
+    auto fut = std::async(std::launch::async, processState, initial, 0);
+    fut.get();
 
     if (!found.load()) {
          std::cout << "No prime path from " << start << " to " << end << "\n";

@@ -1,50 +1,46 @@
-// File: implementation/threaded/ShortestPrimePathThreaded.cpp
-
 #include "../../headers/threaded/ShortestPrimePathThreaded.h"
 #include "../../headers/Graph.h"
-#include "../../headers/ThreadPool.h"
 #include <iostream>
 #include <vector>
 #include <string>
 #include <atomic>
 #include <mutex>
-#include <thread>
-#include <functional>
+#include <future>
 #include <climits>
 #include <cmath>
+#include <functional>
 
-// Helper function to check if a number is prime.
+// For convenience, alias the State type.
+using State = ShortestPrimePathThreaded::State;
+
 bool ShortestPrimePathThreaded::isPrime(int n) {
     if(n <= 1) return false;
     if(n <= 3) return true;
     if(n % 2 == 0 || n % 3 == 0) return false;
     for (int i = 5; i * i <= n; i += 6)
-         if(n % i == 0 || n % (i+2) == 0)
+         if(n % i == 0 || n % (i + 2) == 0)
              return false;
     return true;
 }
 
 void ShortestPrimePathThreaded::displayPath(const std::string &start, const std::string &end, Graph* graph) {
-    // Create a thread pool using available hardware concurrency (or default to 4 if not available).
-    size_t numThreads = std::thread::hardware_concurrency();
-    if(numThreads == 0) numThreads = 4;
-    ThreadPool pool(numThreads);
-
-    // Shared variables for tracking the best (smallest) prime weight found.
+    // Shared atomic for the best (smallest) prime weight found.
     std::atomic<int> bestWeight(INT_MAX);
-    std::mutex bestMutex; // Protects updates to bestPath.
+    // Mutex for protecting the best path update.
+    std::mutex bestMutex;
     std::vector<std::string> bestPath;
 
-    // Recursive lambda with a depth parameter to avoid unbounded recursion.
+    // Recursive lambda that searches from a given state.
+    // The "depth" parameter is used to limit immediate recursion.
     std::function<void(State, int)> processState;
     processState = [&](State current, int depth) {
-        // Prune if current state's weight already exceeds the best found.
+        // Prune if the current weight is no better than the best found.
         if (current.weight >= bestWeight.load())
             return;
-        // Check if we have reached the destination with a prime weight.
+        // If destination reached with a valid prime weight, try to update best solution.
         if (current.node == end && current.weight > 0 && isPrime(current.weight)) {
             int prevBest = bestWeight.load();
-            // Update bestWeight if the current weight is smaller.
+            // Atomically update bestWeight.
             while (current.weight < prevBest && !bestWeight.compare_exchange_weak(prevBest, current.weight)) {
                 // prevBest is updated with the current best value.
             }
@@ -54,9 +50,11 @@ void ShortestPrimePathThreaded::displayPath(const std::string &start, const std:
             }
             return;
         }
-        // Expand neighbors.
+        // Expand neighbors from the current node.
         const std::vector<Edge>& neighbors = graph->getNeighbors(current.node);
+        std::vector<std::future<void>> futures;
         for (const Edge &edge : neighbors) {
+            // Skip if the neighbor is already in the path (avoid cycles).
             bool alreadyVisited = false;
             for (const auto &n : current.path) {
                 if(n == edge.node) {
@@ -71,25 +69,27 @@ void ShortestPrimePathThreaded::displayPath(const std::string &start, const std:
             next.weight = current.weight + edge.weight;
             next.path = current.path;
             next.path.push_back(edge.node);
-            // Prune if next state's weight is already no better than the best found.
             if (next.weight >= bestWeight.load())
                 continue;
-            // If depth exceeds threshold, queue a new task with depth reset to 0.
-            if (depth >= 50) {
-                pool.queueTask([=, &bestWeight, &processState]() {
-                    processState(next, 0);
-                });
+            // If the recursion depth is too high, launch asynchronously.
+            if (depth >= 3) {
+                futures.push_back(std::async(std::launch::async, processState, next, depth + 1));
             } else {
                 processState(next, depth + 1);
             }
+        }
+        // Wait for all asynchronous tasks at this level.
+        for (auto &f : futures) {
+            f.get();
         }
     };
 
     // Start processing from the initial state.
     State initial { start, 0, {start} };
-    pool.queueTask([&]() { processState(initial, 0); });
-    pool.waitForAllTasks();
+    auto fut = std::async(std::launch::async, processState, initial, 0);
+    fut.get();
 
+    // Output the best solution if found.
     if (bestWeight.load() < INT_MAX) {
          std::cout << "shortest prime path: ";
          for (size_t i = 0; i < bestPath.size(); ++i) {
