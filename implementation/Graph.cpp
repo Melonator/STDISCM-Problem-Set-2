@@ -47,7 +47,7 @@ void Graph::parseGraph(const std::string &file_name) {
 }
 
 std::vector<Edge> Graph::getNeighbors(const std::string &node) const {
-    return graph.at(node);
+    return graph.count(node) ? graph.at(node) : std::vector<Edge>{};
 }
 
 void Graph::displayEdges() {
