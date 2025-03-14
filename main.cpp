@@ -1,6 +1,7 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <chrono>
 
 // Include both sequential and threaded headers.
 #include "headers/Graph.h"
@@ -51,9 +52,7 @@ int main() {
         shortestPrimePath = std::make_unique<ShortestPrimePathSequential>();
     } else {
         // Parallel mode.
-        int numThreads = 0;
-        cout << "How many threads? ";
-        cin >> numThreads;
+        int numThreads = 4;
         // Optionally, you can pass numThreads to your threaded implementations or store it globally.
         graph = new Graph(file_name);
         aStar = std::make_unique<ShortestPathThreaded>();
@@ -71,7 +70,7 @@ int main() {
         getline(cin, fullCommand);
         if (fullCommand == "exit")
             break;
-        
+
         // Get the first token of the command.
         const string command = fullCommand.substr(0, fullCommand.find(' '));
 

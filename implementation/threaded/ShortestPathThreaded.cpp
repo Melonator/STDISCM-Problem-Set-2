@@ -12,7 +12,7 @@
 // Define a local structure to represent a search state.
 struct State {
     std::string node;              // Current node label.
-    int weight;                    // Cumulative weight from the start.
+    size_t weight;                    // Cumulative weight from the start.
     std::vector<std::string> path; // The path taken so far.
 };
 

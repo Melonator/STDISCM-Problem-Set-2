@@ -8,7 +8,7 @@ public:
 private:
     struct State {
         std::string node;              // Current node label.
-        int weight;                    // Cumulative weight from the start node.
+        size_t weight;                    // Cumulative weight from the start node.
         std::vector<std::string> path; // The path taken so far.
     };
     struct StateComparator {

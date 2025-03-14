@@ -3,7 +3,7 @@
 #include <fstream>
 #include <iostream>
 
-Edge::Edge(const std::string &node, const int weight) {
+Edge::Edge(const std::string &node, const size_t weight) {
     this->node = node;
     this->weight = weight;
 }
@@ -18,7 +18,7 @@ void Graph::parseGraph(const std::string &file_name) {
     std::string symbol;
     std::string node;
     std::string neighbor;
-    int weight;
+    size_t weight;
     if (!File.is_open()) {
         return;
     }

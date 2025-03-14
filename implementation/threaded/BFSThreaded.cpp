@@ -11,7 +11,7 @@ void BFSThreaded::displayPath(const std::string &start, const std::string &end, 
     // Define a local structure to represent a search state.
     struct State {
         std::string node;              // Current node.
-        int weight;                 // Cumulative weight from the start.
+        size_t weight;                 // Cumulative weight from the start.
         std::vector<std::string> path; // Sequence of nodes in the current path.
     };
 

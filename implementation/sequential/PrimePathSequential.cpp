@@ -6,7 +6,7 @@
 #include <string>
 
 // Helper function to check if a number is prime.
-bool PrimePathSequential::isPrime(int n) {
+bool PrimePathSequential::isPrime(size_t n) {
     if(n <= 1) return false;
     if(n <= 3) return true;
     if(n % 2 == 0 || n % 3 == 0) return false;

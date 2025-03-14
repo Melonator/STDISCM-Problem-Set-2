@@ -10,8 +10,8 @@
 
 struct Edge {
     std::string node;
-    int weight;
-    Edge(const std::string& node, const int weight);
+    size_t weight;
+    Edge(const std::string& node, const size_t weight);
 };
 
 class Graph {

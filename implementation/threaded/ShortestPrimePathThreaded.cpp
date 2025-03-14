@@ -13,7 +13,7 @@
 // For convenience, alias the State type.
 using State = ShortestPrimePathThreaded::State;
 
-bool ShortestPrimePathThreaded::isPrime(int n) {
+bool ShortestPrimePathThreaded::isPrime(size_t n) {
     if(n <= 1) return false;
     if(n <= 3) return true;
     if(n % 2 == 0 || n % 3 == 0) return false;

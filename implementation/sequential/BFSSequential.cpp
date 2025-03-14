@@ -9,7 +9,7 @@ void BFSSequential::displayPath(const std::string &start, const std::string &end
     // Define a local structure to hold the state for the BFS.
     struct State {
         std::string node;              // current node
-        int weight;                    // cumulative weight from the start node
+        size_t weight;                    // cumulative weight from the start node
         std::vector<std::string> path; // path taken so far
     };
 
