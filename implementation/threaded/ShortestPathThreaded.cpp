@@ -18,21 +18,21 @@ struct State {
 
 void ShortestPathThreaded::displayPath(const std::string &start, const std::string &end, Graph* graph) {
     // Shared atomic to hold the best (lowest) cumulative weight found.
-    std::atomic<int> bestWeight(INT_MAX);
+    std::atomic<size_t> bestWeight(SIZE_T_MAX);
     // Mutex to protect bestPath updates.
     std::mutex bestMutex;
     std::vector<std::string> bestPath;
 
     // Recursive lambda that explores from a given state.
     // The "depth" parameter helps limit immediate recursion (to control thread spawning).
-    std::function<void(State, int)> processState;
+    std::function<void(State, size_t)> processState;
     processState = [&](State current, int depth) {
         // Prune if the current state's weight is not better than the best found.
         if (current.weight >= bestWeight.load())
             return;
         // If we've reached the destination, update the best solution.
         if (current.node == end) {
-            int prevBest = bestWeight.load();
+            size_t prevBest = bestWeight.load();
             while (current.weight < prevBest && !bestWeight.compare_exchange_weak(prevBest, current.weight)) {
                 // prevBest is updated with the latest best value.
             }
@@ -83,7 +83,7 @@ void ShortestPathThreaded::displayPath(const std::string &start, const std::stri
     fut.get();
 
     // Output the best solution if found.
-    if (bestWeight.load() < INT_MAX) {
+    if (bestWeight.load() < SIZE_T_MAX) {
          std::cout << "shortest path: ";
          for (size_t i = 0; i < bestPath.size(); ++i) {
              std::cout << bestPath[i];

@@ -17,7 +17,7 @@ bool ShortestPrimePathThreaded::isPrime(size_t n) {
     if(n <= 1) return false;
     if(n <= 3) return true;
     if(n % 2 == 0 || n % 3 == 0) return false;
-    for (int i = 5; i * i <= n; i += 6)
+    for (size_t i = 5; i * i <= n; i += 6)
          if(n % i == 0 || n % (i + 2) == 0)
              return false;
     return true;
@@ -25,21 +25,21 @@ bool ShortestPrimePathThreaded::isPrime(size_t n) {
 
 void ShortestPrimePathThreaded::displayPath(const std::string &start, const std::string &end, Graph* graph) {
     // Shared atomic for the best (smallest) prime weight found.
-    std::atomic<int> bestWeight(INT_MAX);
+    std::atomic<size_t> bestWeight(SIZE_T_MAX);
     // Mutex for protecting the best path update.
     std::mutex bestMutex;
     std::vector<std::string> bestPath;
 
     // Recursive lambda that searches from a given state.
     // The "depth" parameter is used to limit immediate recursion.
-    std::function<void(State, int)> processState;
+    std::function<void(State, size_t)> processState;
     processState = [&](State current, int depth) {
         // Prune if the current weight is no better than the best found.
         if (current.weight >= bestWeight.load())
             return;
         // If destination reached with a valid prime weight, try to update best solution.
         if (current.node == end && current.weight > 0 && isPrime(current.weight)) {
-            int prevBest = bestWeight.load();
+            size_t prevBest = bestWeight.load();
             // Atomically update bestWeight.
             while (current.weight < prevBest && !bestWeight.compare_exchange_weak(prevBest, current.weight)) {
                 // prevBest is updated with the current best value.
@@ -90,7 +90,7 @@ void ShortestPrimePathThreaded::displayPath(const std::string &start, const std:
     fut.get();
 
     // Output the best solution if found.
-    if (bestWeight.load() < INT_MAX) {
+    if (bestWeight.load() < SIZE_T_MAX) {
          std::cout << "shortest prime path: ";
          for (size_t i = 0; i < bestPath.size(); ++i) {
              std::cout << bestPath[i];

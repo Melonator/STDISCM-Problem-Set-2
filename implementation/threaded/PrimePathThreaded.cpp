@@ -10,11 +10,11 @@
 #include <cmath>
 
 // Helper function to check if a number is prime.
-bool PrimePathThreaded::isPrime(int n) {
+bool PrimePathThreaded::isPrime(size_t n) {
     if(n <= 1) return false;
     if(n <= 3) return true;
     if(n % 2 == 0 || n % 3 == 0) return false;
-    for (int i = 5; i * i <= n; i += 6)
+    for (size_t i = 5; i * i <= n; i += 6)
          if(n % i == 0 || n % (i+2) == 0)
              return false;
     return true;
@@ -25,7 +25,7 @@ void PrimePathThreaded::displayPath(const std::string &start, const std::string 
     std::mutex outputMutex;
 
     // Recursive lambda using std::async for parallelism.
-    std::function<void(State, int)> processState;
+    std::function<void(State, size_t)> processState;
     processState = [&](State current, int depth) {
         if (found.load()) return; // Skip if a valid path was already found.
         // If we reached the destination with a nonzero prime weight, print and mark found.
