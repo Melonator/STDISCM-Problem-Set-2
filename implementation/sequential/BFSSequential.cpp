@@ -6,15 +6,13 @@
 #include <string>
 
 void BFSSequential::displayPath(const std::string &start, const std::string &end, Graph* graph) {
-    // Define a local structure to hold the state for the BFS.
     struct State {
-        std::string node;              // current node
-        size_t weight;                    // cumulative weight from the start node
-        std::vector<std::string> path; // path taken so far
+        std::string node;
+        size_t weight;
+        std::vector<std::string> path;
     };
 
     std::queue<State> q;
-    // Start with the initial state: start node, zero weight, and path containing only start.
     q.push({start, 0, {start}});
     bool found = false;
 
@@ -22,7 +20,7 @@ void BFSSequential::displayPath(const std::string &start, const std::string &end
         State current = q.front();
         q.pop();
 
-        // If destination is reached, output the path and its cumulative weight.
+        // Output path if destination is reached
         if (current.node == end) {
             std::cout << "path: ";
             for (size_t i = 0; i < current.path.size(); i++) {
@@ -38,7 +36,6 @@ void BFSSequential::displayPath(const std::string &start, const std::string &end
         // Expand neighbors of the current node.
         const std::vector<Edge>& neighbors = graph->getNeighbors(current.node);
         for (const Edge &edge : neighbors) {
-            // Avoid cycles by checking if the neighbor is already in the path.
             bool alreadyVisited = false;
             for (const auto &visitedNode : current.path) {
                 if (visitedNode == edge.node) {
@@ -49,7 +46,6 @@ void BFSSequential::displayPath(const std::string &start, const std::string &end
             if (alreadyVisited)
                 continue;
 
-            // Create a new state for the neighbor.
             State next;
             next.node = edge.node;
             next.weight = current.weight + edge.weight;

@@ -10,7 +10,6 @@
 #include <cmath>
 #include <functional>
 
-// For convenience, alias the State type.
 using State = ShortestPrimePathThreaded::State;
 
 bool ShortestPrimePathThreaded::isPrime(size_t n) {
@@ -24,9 +23,7 @@ bool ShortestPrimePathThreaded::isPrime(size_t n) {
 }
 
 void ShortestPrimePathThreaded::displayPath(const std::string &start, const std::string &end, Graph* graph) {
-    // Shared atomic for the best (smallest) prime weight found.
-    std::atomic<size_t> bestWeight(SIZE_T_MAX);
-    // Mutex for protecting the best path update.
+    std::atomic<size_t> bestWeight(SIZE_MAX);
     std::mutex bestMutex;
     std::vector<std::string> bestPath;
 
@@ -40,9 +37,7 @@ void ShortestPrimePathThreaded::displayPath(const std::string &start, const std:
         // If destination reached with a valid prime weight, try to update best solution.
         if (current.node == end && current.weight > 0 && isPrime(current.weight)) {
             size_t prevBest = bestWeight.load();
-            // Atomically update bestWeight.
             while (current.weight < prevBest && !bestWeight.compare_exchange_weak(prevBest, current.weight)) {
-                // prevBest is updated with the current best value.
             }
             {
                 std::lock_guard<std::mutex> lock(bestMutex);
@@ -54,7 +49,6 @@ void ShortestPrimePathThreaded::displayPath(const std::string &start, const std:
         const std::vector<Edge>& neighbors = graph->getNeighbors(current.node);
         std::vector<std::future<void>> futures;
         for (const Edge &edge : neighbors) {
-            // Skip if the neighbor is already in the path (avoid cycles).
             bool alreadyVisited = false;
             for (const auto &n : current.path) {
                 if(n == edge.node) {
@@ -71,26 +65,25 @@ void ShortestPrimePathThreaded::displayPath(const std::string &start, const std:
             next.path.push_back(edge.node);
             if (next.weight >= bestWeight.load())
                 continue;
-            // If the recursion depth is too high, launch asynchronously.
+            // limit recursion
             if (depth >= 3) {
                 futures.push_back(std::async(std::launch::async, processState, next, depth + 1));
             } else {
                 processState(next, depth + 1);
             }
         }
-        // Wait for all asynchronous tasks at this level.
+        // Finish all spawned tasks (those that exceeded the depth)
         for (auto &f : futures) {
             f.get();
         }
     };
 
-    // Start processing from the initial state.
     State initial { start, 0, {start} };
     auto fut = std::async(std::launch::async, processState, initial, 0);
     fut.get();
 
     // Output the best solution if found.
-    if (bestWeight.load() < SIZE_T_MAX) {
+    if (bestWeight.load() < SIZE_MAX) {
          std::cout << "shortest prime path: ";
          for (size_t i = 0; i < bestPath.size(); ++i) {
              std::cout << bestPath[i];

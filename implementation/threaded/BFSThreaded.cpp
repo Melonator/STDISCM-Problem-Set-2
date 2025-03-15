@@ -8,18 +8,16 @@
 #include <atomic>
 
 void BFSThreaded::displayPath(const std::string &start, const std::string &end, Graph* graph) {
-    // Define a local structure to represent a search state.
     struct State {
-        std::string node;              // Current node.
-        size_t weight;                 // Cumulative weight from the start.
-        std::vector<std::string> path; // Sequence of nodes in the current path.
+        std::string node;
+        size_t weight;
+        std::vector<std::string> path;
     };
 
     std::atomic<bool> found(false);
-    State foundState;                  // Will hold the state that reaches the destination.
-    std::mutex foundMutex;             // Protects updates to foundState.
+    State foundState;
+    std::mutex foundMutex;
 
-    // Initialize the frontier with the start state.
     std::vector<State> currentFrontier;
     currentFrontier.push_back({start, 0, {start}});
 
@@ -28,13 +26,11 @@ void BFSThreaded::displayPath(const std::string &start, const std::string &end, 
         std::vector<State> nextFrontier;
         std::vector<std::future<std::vector<State>>> futures;
 
-        // Launch a task for each state in the current frontier.
         for (auto &state : currentFrontier) {
             futures.push_back(std::async(std::launch::async, [&graph, &state, &end, &found]() -> std::vector<State> {
                 std::vector<State> newStates;
                 const std::vector<Edge>& neighbors = graph->getNeighbors(state.node);
                 for (const Edge &edge : neighbors) {
-                    // Avoid cycles: do not re-add a node already in the path.
                     bool alreadyVisited = false;
                     for (const auto &n : state.path) {
                         if (n == edge.node) {
@@ -44,7 +40,6 @@ void BFSThreaded::displayPath(const std::string &start, const std::string &end, 
                     }
                     if (alreadyVisited)
                         continue;
-                    // Create a new state for the neighbor.
                     State next;
                     next.node = edge.node;
                     next.weight = state.weight + edge.weight;
@@ -60,7 +55,6 @@ void BFSThreaded::displayPath(const std::string &start, const std::string &end, 
         for (auto &fut : futures) {
             std::vector<State> newStates = fut.get();
             for (auto &s : newStates) {
-                // If this state reaches the destination, record it.
                 if (s.node == end) {
                     if (!found.load()) {
                         std::lock_guard<std::mutex> lock(foundMutex);

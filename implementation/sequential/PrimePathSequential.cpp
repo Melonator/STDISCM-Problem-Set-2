@@ -5,7 +5,6 @@
 #include <vector>
 #include <string>
 
-// Helper function to check if a number is prime.
 bool PrimePathSequential::isPrime(size_t n) {
     if(n <= 1) return false;
     if(n <= 3) return true;
@@ -42,7 +41,6 @@ void PrimePathSequential::displayPath(const std::string &start, const std::strin
          // Expand each neighbor from the current node.
          const std::vector<Edge>& neighbors = graph->getNeighbors(current.node);
          for (const Edge &edge : neighbors) {
-              // Check if the neighbor is already in the path (avoid cycles).
               bool alreadyVisited = false;
               for (const auto &n : current.path) {
                   if(n == edge.node) {

@@ -25,8 +25,9 @@ using namespace std;
 int main() {
     string file_name;
     string fullCommand;
-    // We'll hold our algorithm strategies via IPathBuilder pointers.
-    std::unique_ptr<IPathBuilder> aStar;
+
+    // Algorithm strategies that could be threaded or sequential
+    std::unique_ptr<IPathBuilder> shortestPath;
     std::unique_ptr<IPathBuilder> bfs;
     std::unique_ptr<IPathBuilder> primePath;
     std::unique_ptr<IPathBuilder> shortestPrimePath;
@@ -46,22 +47,19 @@ int main() {
     if (mode == 0) {
         // Sequential mode.
         graph = new Graph(file_name);
-        aStar = std::make_unique<ShortestPathSequential>();
+        shortestPath = std::make_unique<ShortestPathSequential>();
         bfs = std::make_unique<BFSSequential>();
         primePath = std::make_unique<PrimePathSequential>();
         shortestPrimePath = std::make_unique<ShortestPrimePathSequential>();
     } else {
         // Parallel mode.
-        int numThreads = 4;
-        // Optionally, you can pass numThreads to your threaded implementations or store it globally.
         graph = new Graph(file_name);
-        aStar = std::make_unique<ShortestPathThreaded>();
+        shortestPath = std::make_unique<ShortestPathThreaded>();
         bfs = std::make_unique<BFSThreaded>();
         primePath = std::make_unique<PrimePathThreaded>();
         shortestPrimePath = std::make_unique<ShortestPrimePathThreaded>();
     }
 
-    // Update the Pathfinder with the created graph.
     pathFinder = Pathfinder(graph);
 
     cin.ignore();
@@ -113,7 +111,7 @@ int main() {
             size_t secondSpace = fullCommand.find(' ', firstSpace + 1);
             string node1 = fullCommand.substr(firstSpace + 1, secondSpace - firstSpace - 1);
             string node2 = fullCommand.substr(secondSpace + 1);
-            pathFinder.setStrategy(aStar.get());
+            pathFinder.setStrategy(shortestPath.get());
             pathFinder.displayPath(node1, node2, graph);
         } else {
             cout << "Invalid command.\n";

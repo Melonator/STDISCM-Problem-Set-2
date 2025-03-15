@@ -6,7 +6,6 @@
 #include <string>
 #include <cmath>
 
-// Helper function to check if a number is prime.
 bool ShortestPrimePathSequential::isPrime(size_t n) {
     if(n <= 1) return false;
     if(n <= 3) return true;
@@ -18,7 +17,6 @@ bool ShortestPrimePathSequential::isPrime(size_t n) {
     return true;
 }
 
-// Define the nested comparator type with the proper scope.
 struct ShortestPrimePathSequential::StateComparator {
     bool operator()(const State &a, const State &b) const {
          return a.weight > b.weight;
@@ -50,7 +48,6 @@ void ShortestPrimePathSequential::displayPath(const std::string &start, const st
          // Expand the neighbors.
          const std::vector<Edge>& neighbors = graph->getNeighbors(current.node);
          for (const Edge &edge : neighbors) {
-              // Avoid cycles by checking if the node is already in the path.
               bool alreadyVisited = false;
               for (const auto &n : current.path) {
                   if(n == edge.node) {

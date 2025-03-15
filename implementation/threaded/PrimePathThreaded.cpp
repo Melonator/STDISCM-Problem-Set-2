@@ -9,7 +9,6 @@
 #include <climits>
 #include <cmath>
 
-// Helper function to check if a number is prime.
 bool PrimePathThreaded::isPrime(size_t n) {
     if(n <= 1) return false;
     if(n <= 3) return true;
@@ -27,8 +26,7 @@ void PrimePathThreaded::displayPath(const std::string &start, const std::string 
     // Recursive lambda using std::async for parallelism.
     std::function<void(State, size_t)> processState;
     processState = [&](State current, int depth) {
-        if (found.load()) return; // Skip if a valid path was already found.
-        // If we reached the destination with a nonzero prime weight, print and mark found.
+        if (found.load()) return;
         if (current.node == end && current.weight > 0 && isPrime(current.weight)) {
             bool expected = false;
             if (found.compare_exchange_strong(expected, true)) {
@@ -46,7 +44,6 @@ void PrimePathThreaded::displayPath(const std::string &start, const std::string 
         const std::vector<Edge>& neighbors = graph->getNeighbors(current.node);
         std::vector<std::future<void>> localFutures;
         for (const Edge &edge : neighbors) {
-            // Avoid cycles by ensuring we don't revisit nodes already in the path.
             bool alreadyVisited = false;
             for (const auto &n : current.path) {
                 if (n == edge.node) {
@@ -61,14 +58,14 @@ void PrimePathThreaded::displayPath(const std::string &start, const std::string 
             next.weight = current.weight + edge.weight;
             next.path = current.path;
             next.path.push_back(edge.node);
-            // If too deep, launch asynchronously to limit recursive calls.
+            // Limit recursion
             if (depth >= 3) {
                 localFutures.push_back(std::async(std::launch::async, processState, next, depth + 1));
             } else {
                 processState(next, depth + 1);
             }
         }
-        // Wait for all spawned tasks at this level.
+        // Finish all spawned tasks (those that exceeded the depth)
         for (auto &fut : localFutures) {
             fut.get();
         }

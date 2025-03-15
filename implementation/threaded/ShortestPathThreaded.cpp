@@ -9,17 +9,14 @@
 #include <climits>
 #include <functional>
 
-// Define a local structure to represent a search state.
 struct State {
-    std::string node;              // Current node label.
-    size_t weight;                    // Cumulative weight from the start.
-    std::vector<std::string> path; // The path taken so far.
+    std::string node;
+    size_t weight;
+    std::vector<std::string> path;
 };
 
 void ShortestPathThreaded::displayPath(const std::string &start, const std::string &end, Graph* graph) {
-    // Shared atomic to hold the best (lowest) cumulative weight found.
-    std::atomic<size_t> bestWeight(SIZE_T_MAX);
-    // Mutex to protect bestPath updates.
+    std::atomic<size_t> bestWeight(SIZE_MAX);
     std::mutex bestMutex;
     std::vector<std::string> bestPath;
 
@@ -30,11 +27,9 @@ void ShortestPathThreaded::displayPath(const std::string &start, const std::stri
         // Prune if the current state's weight is not better than the best found.
         if (current.weight >= bestWeight.load())
             return;
-        // If we've reached the destination, update the best solution.
         if (current.node == end) {
             size_t prevBest = bestWeight.load();
             while (current.weight < prevBest && !bestWeight.compare_exchange_weak(prevBest, current.weight)) {
-                // prevBest is updated with the latest best value.
             }
             {
                 std::lock_guard<std::mutex> lock(bestMutex);
@@ -46,7 +41,6 @@ void ShortestPathThreaded::displayPath(const std::string &start, const std::stri
         const std::vector<Edge>& neighbors = graph->getNeighbors(current.node);
         std::vector<std::future<void>> futures;
         for (const Edge &edge : neighbors) {
-            // Avoid cycles: skip neighbor if already in current path.
             bool alreadyVisited = false;
             for (const auto &n : current.path) {
                 if (n == edge.node) {
@@ -61,29 +55,27 @@ void ShortestPathThreaded::displayPath(const std::string &start, const std::stri
             next.weight = current.weight + edge.weight;
             next.path = current.path;
             next.path.push_back(edge.node);
-            // Prune if next state's weight is no better than the current best.
             if (next.weight >= bestWeight.load())
                 continue;
-            // To limit recursion depth, if depth exceeds threshold, spawn asynchronously.
+            // Limit recursion
             if (depth >= 3) {
                 futures.push_back(std::async(std::launch::async, processState, next, depth + 1));
             } else {
                 processState(next, depth + 1);
             }
         }
-        // Wait for all spawned asynchronous tasks.
+        // Finish all spawned tasks (those that exceeded the depth)
         for (auto &f : futures) {
             f.get();
         }
     };
 
-    // Start processing from the initial state.
     State initial { start, 0, {start} };
     auto fut = std::async(std::launch::async, processState, initial, 0);
     fut.get();
 
     // Output the best solution if found.
-    if (bestWeight.load() < SIZE_T_MAX) {
+    if (bestWeight.load() < SIZE_MAX) {
          std::cout << "shortest path: ";
          for (size_t i = 0; i < bestPath.size(); ++i) {
              std::cout << bestPath[i];
