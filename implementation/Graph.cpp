@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iostream>
 
+#pragma region PSET2
 Edge::Edge(const std::string &node, const size_t weight) {
     this->node = node;
     this->weight = weight;
@@ -81,6 +82,21 @@ bool Graph::hasNode(const std::string &node) const {
     }
 }
 
+#pragma endregion
+
+#pragma region PSET3
+std::unordered_map<std::string, std::mutex> Graph::getNodeMutex(const std::string &node) const {
+    return graphMutexes;
+}
+
+std::size_t Graph::getNumAgents() const {
+    return numAgents;
+}
+
+std::vector<InitialAgentData> Graph::getInitialAgentsData() const {
+    return initialAgentsData;
+}
+#pragma endregion
 
 
 

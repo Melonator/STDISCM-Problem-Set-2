@@ -15,4 +15,5 @@ add_executable(STDISCM_ProblemSet_2 main.cpp
         implementation/threaded/BFSThreaded.cpp
         implementation/threaded/PrimePathThreaded.cpp
         implementation/threaded/ShortestPrimePathThreaded.cpp
-        implementation/IPathBuilder.cpp)
+        implementation/IPathBuilder.cpp
+        headers/AgentsSimulator.h)
