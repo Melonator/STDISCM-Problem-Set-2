@@ -15,6 +15,7 @@
 #include "headers/sequential/ShortestPrimePathSequential.h"
 
 // Threaded implementations.
+#include "headers/AgentsSimulator.h"
 #include "headers/threaded/ShortestPathThreaded.h"
 #include "headers/threaded/BFSThreaded.h"
 #include "headers/threaded/PrimePathThreaded.h"
@@ -61,6 +62,7 @@ int main() {
     }
 
     pathFinder = Pathfinder(graph);
+    AgentsSimulator agentsSimulator(graph);
 
     cin.ignore();
     while (true) {
@@ -113,6 +115,8 @@ int main() {
             string node2 = fullCommand.substr(secondSpace + 1);
             pathFinder.setStrategy(shortestPath.get());
             pathFinder.displayPath(node1, node2, graph);
+        } else if (command == "simulate-agents") {
+            agentsSimulator.RunSimulation();
         } else {
             cout << "Invalid command.\n";
         }

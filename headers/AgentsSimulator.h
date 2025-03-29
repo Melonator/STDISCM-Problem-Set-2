@@ -8,7 +8,8 @@ public:
     void RunSimulation();
 
 private:
-    void Explore();
+    std::unordered_map<std::string, std::mutex*> graphMutexes;
+    void Explore(const InitialAgentData &initial_agent_data) const;
     Graph* graph;
 };
 

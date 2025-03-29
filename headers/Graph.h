@@ -9,16 +9,12 @@
 #include <unordered_map>
 #include <vector>
 
+#include "InitialAgentData.h"
+
 struct Edge {
     std::string node;
     size_t weight;
     Edge(const std::string& node, const size_t weight);
-};
-
-struct InitialAgentData {
-    int x;
-    int y;
-    std::string startNode;
 };
 
 class Graph {
@@ -26,19 +22,20 @@ public:
     explicit Graph(const std::string& file_name);
     void displayNodes();
     void displayEdges();
+    size_t getNumNodes() const;
+    std::vector<std::string> getNodes() const;
     bool hasNode(const std::string& node) const;
     bool hasEdge(const std::string& node1, const std::string& node2) const;
     std::vector<Edge> getNeighbors(const std::string& node) const;
+    std::vector<Edge> getNeighbors(const std::string& node, size_t weight) const;
     std::vector<InitialAgentData> getInitialAgentsData() const;
     std::size_t getNumAgents() const;
-    std::unordered_map<std::string, std::mutex> getNodeMutex(const std::string& node) const;
 
 protected:
     std::unordered_map<std::string, std::vector<Edge>> graph;
 
 private:
     int numAgents;
-    std::unordered_map<std::string, std::mutex> graphMutexes;
     std::vector<InitialAgentData> initialAgentsData;
     void parseGraph(const std::string& file_name);
 };

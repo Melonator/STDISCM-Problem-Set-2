@@ -1,5 +1,4 @@
 #include "../headers/Graph.h"
-
 #include <fstream>
 #include <iostream>
 
@@ -13,6 +12,9 @@ Graph::Graph(const std::string &file_name) {
     parseGraph(file_name);
 }
 
+//TODO: Update parsing algorithm
+// set numAgents private variable
+// set the initialAgentsData private variable(i.e., x, y, startnode)
 void Graph::parseGraph(const std::string &file_name) {
     std::ifstream File(file_name);
 
@@ -59,6 +61,19 @@ void Graph::displayNodes() {
 
 }
 
+std::vector<std::string> Graph::getNodes() const {
+    std::vector<std::string> nodes;
+    for (const auto & it : graph) {
+        nodes.emplace_back(it.first);
+    }
+
+    return nodes;
+}
+
+size_t Graph::getNumNodes() const{
+   return graph.size();
+}
+
 bool Graph::hasEdge(const std::string &node1, const std::string &node2) const {
     if (!hasNode(node1)) {
         return false;
@@ -85,10 +100,6 @@ bool Graph::hasNode(const std::string &node) const {
 #pragma endregion
 
 #pragma region PSET3
-std::unordered_map<std::string, std::mutex> Graph::getNodeMutex(const std::string &node) const {
-    return graphMutexes;
-}
-
 std::size_t Graph::getNumAgents() const {
     return numAgents;
 }
@@ -96,6 +107,12 @@ std::size_t Graph::getNumAgents() const {
 std::vector<InitialAgentData> Graph::getInitialAgentsData() const {
     return initialAgentsData;
 }
+
+//TODO: new get neighbors that only has a specific weight for the edge
+std::vector<Edge> Graph::getNeighbors(const std::string& node, size_t weight) const {
+
+}
+
 #pragma endregion
 
 
