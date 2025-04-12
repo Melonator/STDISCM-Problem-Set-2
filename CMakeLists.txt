@@ -18,4 +18,8 @@ add_executable(STDISCM_ProblemSet_2 main.cpp
         implementation/IPathBuilder.cpp
         headers/AgentsSimulator.h
         implementation/AgentsSimulator.cpp
-        headers/InitialAgentData.h)
+        headers/InitialAgentData.h
+        headers/NodeMonitor.h
+        implementation/NodeMonitor.cpp
+        headers/LogEntry.h
+)

@@ -23,8 +23,10 @@ struct ShortestPrimePathSequential::StateComparator {
     }
 };
 
-void ShortestPrimePathSequential::displayPath(const std::string &start, const std::string &end, Graph* graph) {
+std::vector<std::string> ShortestPrimePathSequential::displayPath(const std::string &start, const std::string &end, Graph* graph) {
     std::priority_queue<State, std::vector<State>, StateComparator> pq;
+    std::vector<std::string> finalPath;
+
     pq.push({start, 0, {start}});
     bool found = false;
 
@@ -34,6 +36,7 @@ void ShortestPrimePathSequential::displayPath(const std::string &start, const st
 
          // Check if we reached the destination with a nonzero prime weight.
          if (current.node == end && current.weight > 0 && isPrime(current.weight)) {
+              finalPath = current.path;
               std::cout << "shortest prime path: ";
               for (size_t i = 0; i < current.path.size(); ++i) {
                   std::cout << current.path[i];
@@ -70,4 +73,6 @@ void ShortestPrimePathSequential::displayPath(const std::string &start, const st
     if (!found) {
          std::cout << "No prime path from " << start << " to " << end << "\n";
     }
+
+    return finalPath;
 }

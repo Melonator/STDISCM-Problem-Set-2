@@ -1,5 +1,5 @@
 #include "../headers/IPathBuilder.h"
 
-void IPathBuilder::displayPath(const std::string &start, const std::string &end, Graph* graph) {
+std::vector<std::string> IPathBuilder::displayPath(const std::string &start, const std::string &end, Graph* graph) {
 
 }

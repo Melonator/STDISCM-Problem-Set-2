@@ -7,8 +7,10 @@
 #include <vector>
 #include <string>
 
-void ShortestPathSequential::displayPath(const std::string &start, const std::string &end, Graph* graph) {
+std::vector<std::string> ShortestPathSequential::displayPath(const std::string &start, const std::string &end, Graph* graph) {
     std::priority_queue<State, std::vector<State>, StateComparator> pq;
+    std::vector<std::string> finalPath;
+
     pq.push({start, 0, {start}});
 
     bool found = false;
@@ -19,6 +21,7 @@ void ShortestPathSequential::displayPath(const std::string &start, const std::st
         
         // If destination is reached, output the path and weight.
         if (current.node == end) {
+            finalPath = current.path;
             std::cout << "shortest path: ";
             for (size_t i = 0; i < current.path.size(); ++i) {
                 std::cout << current.path[i];
@@ -56,4 +59,6 @@ void ShortestPathSequential::displayPath(const std::string &start, const std::st
     if (!found) {
         std::cout << "No path from " << start << " to " << end << "\n";
     }
+
+    return finalPath;
 }

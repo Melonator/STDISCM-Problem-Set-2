@@ -4,7 +4,7 @@
 
 class ShortestPathSequential: public IPathBuilder {
 public:
-    void displayPath(const std::string &start, const std::string &end, Graph* graph);
+    std::vector<std::string> displayPath(const std::string &start, const std::string &end, Graph* graph);
 private:
     struct State {
         std::string node;              // Current node label.

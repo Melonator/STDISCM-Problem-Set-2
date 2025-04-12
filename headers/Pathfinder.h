@@ -10,7 +10,7 @@ class Pathfinder {
 public:
     explicit Pathfinder(Graph* graph);
     void setStrategy(IPathBuilder* strategy);
-    void displayPath(const std::string& start, const std::string& end, Graph* graph);
+    std::vector<std::string> displayPath(const std::string& start, const std::string& end, Graph* graph);
 private:
     IPathBuilder* _path_builder = nullptr;
     Graph* graph = nullptr;

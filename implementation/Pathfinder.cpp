@@ -6,9 +6,9 @@ void Pathfinder::setStrategy(IPathBuilder* strategy){
     _path_builder = strategy;
 }
 
-void Pathfinder::displayPath(const std::string& start,const std::string& end, Graph* graph) {
+std::vector<std::string> Pathfinder::displayPath(const std::string& start,const std::string& end, Graph* graph) {
     if (_path_builder) {
-        _path_builder->displayPath(start, end, graph);
+        return _path_builder->displayPath(start, end, graph);
     } else {
         std::cerr << "Error: _path_builder is NULL!" << std::endl;
     }

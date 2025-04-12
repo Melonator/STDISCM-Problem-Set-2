@@ -7,13 +7,14 @@
 #include <mutex>
 #include <atomic>
 
-void BFSThreaded::displayPath(const std::string &start, const std::string &end, Graph* graph) {
+std::vector<std::string> BFSThreaded::displayPath(const std::string &start, const std::string &end, Graph* graph) {
     struct State {
         std::string node;
         size_t weight;
         std::vector<std::string> path;
     };
 
+    std::vector<std::string> finalPath;
     std::atomic<bool> found(false);
     State foundState;
     std::mutex foundMutex;
@@ -85,4 +86,6 @@ void BFSThreaded::displayPath(const std::string &start, const std::string &end, 
     } else {
         std::cout << "No path from " << start << " to " << end << "\n";
     }
+
+    return foundState.path;
 }

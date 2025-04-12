@@ -41,6 +41,7 @@ int main() {
     Graph* graph = nullptr;
     // Create the Pathfinder using the graph pointer.
     Pathfinder pathFinder(nullptr);
+    Pathfinder agentPathFinder(nullptr);
 
     cout << "[0] Serial Mode, [1] Parallel Mode: ";
     cin >> mode;
@@ -62,6 +63,7 @@ int main() {
     }
 
     pathFinder = Pathfinder(graph);
+    agentPathFinder.setStrategy(shortestPath.get());
     AgentsSimulator agentsSimulator(graph);
 
     cin.ignore();
@@ -116,7 +118,7 @@ int main() {
             pathFinder.setStrategy(shortestPath.get());
             pathFinder.displayPath(node1, node2, graph);
         } else if (command == "simulate-agents") {
-            agentsSimulator.RunSimulation();
+            agentsSimulator.runSimulation();
         } else {
             cout << "Invalid command.\n";
         }

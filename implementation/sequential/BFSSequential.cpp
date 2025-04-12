@@ -5,7 +5,7 @@
 #include <vector>
 #include <string>
 
-void BFSSequential::displayPath(const std::string &start, const std::string &end, Graph* graph) {
+std::vector<std::string> BFSSequential::displayPath(const std::string &start, const std::string &end, Graph* graph) {
     struct State {
         std::string node;
         size_t weight;
@@ -13,6 +13,7 @@ void BFSSequential::displayPath(const std::string &start, const std::string &end
     };
 
     std::queue<State> q;
+    std::vector<std::string> finalPath;
     q.push({start, 0, {start}});
     bool found = false;
 
@@ -22,6 +23,7 @@ void BFSSequential::displayPath(const std::string &start, const std::string &end
 
         // Output path if destination is reached
         if (current.node == end) {
+            finalPath = current.path;
             std::cout << "path: ";
             for (size_t i = 0; i < current.path.size(); i++) {
                 std::cout << current.path[i];
@@ -30,7 +32,6 @@ void BFSSequential::displayPath(const std::string &start, const std::string &end
             }
             std::cout << " with weight/length= " << current.weight << "\n";
             found = true;
-            break;
         }
 
         // Expand neighbors of the current node.
@@ -58,4 +59,5 @@ void BFSSequential::displayPath(const std::string &start, const std::string &end
     if (!found) {
         std::cout << "No path from " << start << " to " << end << "\n";
     }
+    return finalPath;
 }

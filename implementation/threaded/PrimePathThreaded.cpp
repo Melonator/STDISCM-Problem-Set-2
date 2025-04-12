@@ -19,9 +19,10 @@ bool PrimePathThreaded::isPrime(size_t n) {
     return true;
 }
 
-void PrimePathThreaded::displayPath(const std::string &start, const std::string &end, Graph* graph) {
+std::vector<std::string> PrimePathThreaded::displayPath(const std::string &start, const std::string &end, Graph* graph) {
     std::atomic<bool> found(false);
     std::mutex outputMutex;
+    std::vector<std::string> finalPath;
 
     // Recursive lambda using std::async for parallelism.
     std::function<void(State, size_t)> processState;
@@ -31,6 +32,7 @@ void PrimePathThreaded::displayPath(const std::string &start, const std::string 
             bool expected = false;
             if (found.compare_exchange_strong(expected, true)) {
                 std::lock_guard<std::mutex> lock(outputMutex);
+                finalPath = current.path;
                 std::cout << "prime path: ";
                 for (size_t i = 0; i < current.path.size(); ++i) {
                     std::cout << current.path[i];
@@ -39,8 +41,8 @@ void PrimePathThreaded::displayPath(const std::string &start, const std::string 
                 }
                 std::cout << " with weight/length= " << current.weight << "\n";
             }
-            return;
         }
+
         const std::vector<Edge>& neighbors = graph->getNeighbors(current.node);
         std::vector<std::future<void>> localFutures;
         for (const Edge &edge : neighbors) {
@@ -79,4 +81,6 @@ void PrimePathThreaded::displayPath(const std::string &start, const std::string 
     if (!found.load()) {
          std::cout << "No prime path from " << start << " to " << end << "\n";
     }
+
+    return finalPath;
 }

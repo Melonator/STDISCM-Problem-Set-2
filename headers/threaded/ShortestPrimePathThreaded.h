@@ -6,7 +6,7 @@
 
 class ShortestPrimePathThreaded: public IPathBuilder {
 public:
-    void displayPath(const std::string &start, const std::string &end, Graph* graph) override;
+    std::vector<std::string> displayPath(const std::string &start, const std::string &end, Graph* graph) override;
     struct State {
         std::string node;
         size_t weight;

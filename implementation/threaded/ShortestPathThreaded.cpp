@@ -15,7 +15,7 @@ struct State {
     std::vector<std::string> path;
 };
 
-void ShortestPathThreaded::displayPath(const std::string &start, const std::string &end, Graph* graph) {
+std::vector<std::string> ShortestPathThreaded::displayPath(const std::string &start, const std::string &end, Graph* graph) {
     std::atomic<size_t> bestWeight(SIZE_MAX);
     std::mutex bestMutex;
     std::vector<std::string> bestPath;
@@ -86,4 +86,6 @@ void ShortestPathThreaded::displayPath(const std::string &start, const std::stri
     } else {
          std::cout << "No path from " << start << " to " << end << "\n";
     }
+
+    return bestPath;
 }

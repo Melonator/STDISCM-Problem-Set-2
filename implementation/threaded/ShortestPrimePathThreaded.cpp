@@ -22,7 +22,7 @@ bool ShortestPrimePathThreaded::isPrime(size_t n) {
     return true;
 }
 
-void ShortestPrimePathThreaded::displayPath(const std::string &start, const std::string &end, Graph* graph) {
+std::vector<std::string> ShortestPrimePathThreaded::displayPath(const std::string &start, const std::string &end, Graph* graph) {
     std::atomic<size_t> bestWeight(SIZE_MAX);
     std::mutex bestMutex;
     std::vector<std::string> bestPath;
@@ -94,4 +94,6 @@ void ShortestPrimePathThreaded::displayPath(const std::string &start, const std:
     } else {
          std::cout << "No prime path from " << start << " to " << end << "\n";
     }
+
+    return bestPath;
 }

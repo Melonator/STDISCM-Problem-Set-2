@@ -16,8 +16,10 @@ bool PrimePathSequential::isPrime(size_t n) {
     return true;
 }
 
-void PrimePathSequential::displayPath(const std::string &start, const std::string &end, Graph* graph) {
+std::vector<std::string> PrimePathSequential::displayPath(const std::string &start, const std::string &end, Graph* graph) {
     std::queue<State> q;
+    std::vector<std::string> finalPath;
+
     q.push({start, 0, {start}});
     bool found = false;
 
@@ -28,6 +30,7 @@ void PrimePathSequential::displayPath(const std::string &start, const std::strin
          // If we reach the destination with a non-zero prime total weight.
          if (current.node == end && current.weight > 0 && isPrime(current.weight)) {
               std::cout << "prime path: ";
+             finalPath = current.path;
               for (size_t i = 0; i < current.path.size(); ++i) {
                   std::cout << current.path[i];
                   if(i < current.path.size() - 1)
@@ -63,4 +66,6 @@ void PrimePathSequential::displayPath(const std::string &start, const std::strin
     if (!found) {
          std::cout << "No prime path from " << start << " to " << end << "\n";
     }
+
+    return finalPath;
 }

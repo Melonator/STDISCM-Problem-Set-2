@@ -1,6 +1,9 @@
 #include "../headers/Graph.h"
+
+#include <algorithm>
 #include <fstream>
 #include <iostream>
+#include <sstream>
 
 #pragma region PSET2
 Edge::Edge(const std::string &node, const size_t weight) {
@@ -12,41 +15,59 @@ Graph::Graph(const std::string &file_name) {
     parseGraph(file_name);
 }
 
-//TODO: Update parsing algorithm
-// set numAgents private variable
-// set the initialAgentsData private variable(i.e., x, y, startnode)
-void Graph::parseGraph(const std::string &file_name) {
-    std::ifstream File(file_name);
-
-    std::string symbol;
-    std::string node;
-    std::string neighbor;
-    size_t weight;
-    if (!File.is_open()) {
+void Graph::parseGraph(const std::string& file_name)
+{
+    std::ifstream file(file_name);
+    if (!file) {
+        std::cerr << "Could not open " << file_name << '\n';
         return;
     }
 
-    std::cout << "File read!" << "\n";
-    while (!File.eof()) {
-        if (!File.good()) {
-            break;
-        }
-        File >> symbol;
-        if (symbol == "*") {
-            File >> node;
-            graph[node] = {};
-        }
-        else if (symbol == "-") {
-            File >> node;
-            File >> neighbor;
-            File >> weight;
+    auto isAgent = [](const std::string& s) -> bool {
+        auto dash = s.find('-');
+        return dash != std::string::npos &&
+               dash > 0 &&
+               std::all_of(s.begin(), s.begin() + dash,
+                           [](unsigned char c){ return std::isdigit(c); }) &&
+               std::all_of(s.begin() + dash + 1, s.end(),
+                           [](unsigned char c){ return std::isdigit(c); });
+    };
 
-            graph[node].emplace_back(Edge(neighbor, weight));
+    // helper: split token into  {string x, size_t y}
+    auto parseAgent = [](const std::string& s) -> std::pair<std::string, size_t> {
+        std::size_t dash = s.find('-');
+        std::string x    = s.substr(0, dash);          // keep as string
+        size_t      y    = std::stoul(s.substr(dash + 1));
+        return {x, y};
+    };
+
+
+    std::string line;
+    while (std::getline(file, line))
+    {
+        if (line.empty()) continue;
+
+        std::istringstream iss(line);
+        char tag;  iss >> tag;
+
+        if (tag == '*') {
+            std::string nodeLabel;  iss >> nodeLabel;
+            graph[nodeLabel];
+
+            std::string token;
+            while (iss >> token) {
+                if (isAgent(token)) {
+                    auto [x, y] = parseAgent(token);
+                    initialAgentsData.push_back({x, y, nodeLabel});
+                }
+            }
+        }
+        else if (tag == '-') {
+            std::string src, dst; size_t w;
+            iss >> src >> dst >> w;
+            graph[src].emplace_back(Edge{dst, w});
         }
     }
-
-    File.close();
-    std::cout << "File done reading!\n\n";
 }
 
 std::vector<Edge> Graph::getNeighbors(const std::string &node) const {
@@ -108,9 +129,20 @@ std::vector<InitialAgentData> Graph::getInitialAgentsData() const {
     return initialAgentsData;
 }
 
-//TODO: new get neighbors that only has a specific weight for the edge
-std::vector<Edge> Graph::getNeighbors(const std::string& node, size_t weight) const {
+std::vector<Edge> Graph::getNeighbors(const std::string& node,
+                                      size_t weight) const
+{
+    std::vector<Edge> result;
 
+    auto it = graph.find(node);
+    if (it == graph.end()) return result;
+
+    const std::vector<Edge>& adj = it->second;
+    for (const Edge& e : adj) {
+        if (e.weight == weight)
+            result.push_back(e);
+    }
+    return result;
 }
 
 #pragma endregion

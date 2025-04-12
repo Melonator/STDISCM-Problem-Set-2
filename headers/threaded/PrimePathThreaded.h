@@ -4,7 +4,7 @@
 
 class PrimePathThreaded: public IPathBuilder {
 public:
-    void displayPath(const std::string &start, const std::string &end, Graph* graph);
+    std::vector<std::string> displayPath(const std::string &start, const std::string &end, Graph* graph);
 private:
     static bool isPrime(size_t n);
     struct State {
